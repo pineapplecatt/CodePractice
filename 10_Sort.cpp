@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <vector>
 using namespace std;
 
@@ -278,20 +279,119 @@ class Sort {
     }
 
     // 计数排序
+    /*
+    适合最大值不大的情况，如果元素个数少但最大值很大，会造成空间浪费
+    作为一种线性时间复杂度的排序，计数排序要求输入的数据必须是非负整数。实现逻辑如下：
+    ① 找出待排序的数组中最大和最小的元素
+    ② 统计数组中每个值为i的元素出现的次数，存入数组C的第i项
+    ③ 对所有的计数累加（从C中的第一个元素开始，每一项和前一项相加）
+    ④ 反向填充目标数组：将每个元素i放在新数组的第C(i)项，每放一个元素就将C(i)减去1
+    */
+    void CountingSort(vector<int>& arr) {
+        int len = arr.size();
+        // 元素至少两个
+        if (len <= 1) {
+            return;
+        }
+        // 记录arr最大元素作为count数组最大下标
+        int maxVal = arr[0];
+        for (auto x : arr) {
+            if (maxVal < x) {
+                maxVal = x;
+            }
+        }
+        vector<int> count(maxVal + 1, 0);
+        vector<int> temp(arr);
+        // 统计arr每个元素出现次数，存入count
+        for (auto x : arr) {
+            count[x]++;
+        }
+        // 对每个元素x，计算<=x的元素个数
+        for (int i = 1; i <= maxVal; i++) {
+            count[i] += count[i - 1];
+        }
+        // 反向填充arr
+        for (int i = len - 1; i >= 0; i--) {
+            // temp[i]表示原来排序位置，因为从1开始所以再-1
+            arr[count[temp[i]] - 1] = temp[i];
+            count[temp[i]]--;  // temp[i]个数-1
+        }
+    }
 
     // 桶排序
+    // 未完成
+    void BucketSort(vector<int>& arr) {
+        int len = arr.size();
+        // 元素至少两个
+        if (len <= 1) {
+            return;
+        }
+        // 记录arr最大元素作为count数组最大下标
+        int maxVal = arr[0];
+        for (auto x : arr) {
+            if (maxVal < x) {
+                maxVal = x;
+            }
+        }
+        const int bucketCnt = 10;
+        vector<int> buckets(bucketCnt);
+    }
 
     // 基数排序
+    /*
+    以空间换时间，占用内存很大
+    当对海量数据排序时，容易造成 OutOfMemoryError
+    只能排序非负数，负数需要添加绝对值并反转
+    */
+    void RadixSort(vector<int>& arr) {
+        int len = arr.size();
+        // 元素至少两个
+        if (len <= 1) {
+            return;
+        }
+        // 记录arr最大元素作为count数组最大下标
+        int maxVal = arr[0];
+        for (auto x : arr) {
+            if (maxVal < x) {
+                maxVal = x;
+            }
+        }
+        // 计算最大元素位数
+        int maxLen = to_string(maxVal).size();
+        // 10个桶，0~9，每个桶大小为len
+        vector<vector<int>> bucket(10, vector<int>(len));
+        // 记录每个桶中存放了多少数据
+        vector<int> bucketNums(10);
+        // 循环maxLen次，每次用digit记录各元素的n位(个十百千...)
+        for (int i = 0, n = 1; i < maxLen; i++, n *= 10) {
+            for (int j = 0; j < len; j++) {
+                int digit = arr[j] / n % 10;
+                // arr[j]放入本次循环位的数对应的桶中，记录数量自增
+                bucket[digit][bucketNums[digit]++] = arr[j];
+            }
+            int index = 0;  // 所取元素需要放的位置
+            // 取出各个桶中数据，并将数据记录置0（桶本身数据还在）
+            for (int i = 0; i < bucketNums.size(); i++) {
+                if (bucketNums[i] != 0) {
+                    for (int j = 0; j < bucketNums[i]; j++) {
+                        arr[index++] = bucket[i][j];
+                    }
+                    bucketNums[i] = 0;
+                }
+            }
+        }
+    }
 };
 
 int main() {
     Sort s;
-    // vector<int> t{3, 5, 0, 6, 2, 4, 3, 1, 8, 5, 3, 2, 8, 4, 7, 9};
-    vector<int> t{5, 1, 4, 2, 8, 4};
+    vector<int> t{3, 5, 0, 6, 2, 4, 3, 1, 8, 5, 3, 2, 8, 4, 7, 9};
+    // vector<int> t{5, 1, 4, 2, 8, 4};
     int l = t.size() - 1;
-    s.MergeSort2(t);
+    s.RadixSort(t);
     for (auto x : t) {
-        cout << "-" << x << " ";
+        cout << x << " ";
     }
+    cout << endl;
     return 0;
 }
