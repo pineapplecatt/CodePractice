@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <iostream>
+#include <random>
 #include <string>
 #include <vector>
 using namespace std;
@@ -381,17 +383,92 @@ class Sort {
             }
         }
     }
+
+    // 系统函数
+    template <typename T>
+    void correctSort(vector<T>& arr) {
+        sort(arr.begin(), arr.end());
+    }
 };
 
-int main() {
-    Sort s;
-    vector<int> t{3, 5, 0, 6, 2, 4, 3, 1, 8, 5, 3, 2, 8, 4, 7, 9};
-    // vector<int> t{5, 1, 4, 2, 8, 4};
-    int l = t.size() - 1;
-    s.RadixSort(t);
-    for (auto x : t) {
+// 打印数组
+template <typename T>
+void printArray(const vector<T> arr) {
+    if (arr.empty()) {
+        return;
+    }
+    for (auto x : arr) {
         cout << x << " ";
     }
-    cout << endl;
+    cout << "\n";
+}
+
+// 判断两个数组是否相等
+template <typename T>
+bool isEqual(const vector<T> arr1, const vector<T> arr2) {
+    if (arr1.size() != arr2.size()) {
+        return false;
+    }
+    if ((!arr1.empty() && arr2.empty()) || (arr1.empty() && !arr2.empty())) {
+        return false;
+    }
+    for (int i = 0; i < arr1.size(); i++) {
+        if (arr1[i] != arr2[i]) {
+            return false;
+        }
+    }
+    if (arr1.empty() && arr2.empty()) {
+        return true;
+    }
+    return true;
+}
+
+// 生成一个随机大小，随机最大数的数组
+vector<int> generateRandomArray(int maxSize, int maxNum) {
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<int> distrib1(1, maxSize);
+    uniform_int_distribution<int> distrib2(1, maxNum);
+    vector<int> arr(distrib1(gen));  // 随机长度
+    for (int i = 0; i < arr.size(); i++) {
+        arr[i] = distrib2(gen);
+    }
+    return arr;
+}
+
+// 复制原数组
+template <typename T>
+vector<T> copyArray(vector<T> arr) {
+    if (arr.empty()) {
+        return {};
+    }
+    vector<T> newArr(arr.size());
+    for (int i = 0; i < arr.size(); i++) {
+        newArr[i] = arr[i];
+    }
+    return newArr;
+}
+
+int main() {
+    Sort* s = new Sort;
+    int testTimes = 1000;  // 测试次数
+    int maxSize = 20;      // 最大测试容量
+    int maxNum = 20;       // 最大测试数据
+    bool equals = true;
+    for (int i = 1; i <= testTimes; i++) {
+        // 生成随机数组并备份
+        vector<int> testArr = generateRandomArray(maxSize, maxNum);
+        vector<int> copyArr = copyArray(testArr);
+        printArray(testArr);
+        // 验证算法是否正确
+        s->RadixSort(testArr);
+        s->correctSort(copyArr);
+        if (!isEqual(testArr, copyArr)) {
+            equals = false;
+            break;
+        }
+        printArray(testArr);
+        cout << (equals ? "排序正确" : "排序错误") << endl;
+    }
     return 0;
 }
