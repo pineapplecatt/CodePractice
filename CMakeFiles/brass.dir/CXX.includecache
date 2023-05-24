@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/root/CodePractice/brass.cpp
+brass.h
+/root/CodePractice/brass.h
+iostream
+-
+
+/root/CodePractice/brass.h
+string
+-
+
+/root/CodePractice/usebrass1.cpp
+iostream
+-
+brass.h
+/root/CodePractice/brass.h
+
