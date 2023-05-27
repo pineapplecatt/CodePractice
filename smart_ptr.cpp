@@ -3,25 +3,65 @@
 
 using namespace std;
 
-int main() {
-    class A {
-       public:
-        void do_something() {}
-    };
+class A : public std::enable_shared_from_this<A> {
+   private:
+    std::weak_ptr<B> b_;
+    std::weak_ptr<C> c_;
 
-    class TestUnique{
-        private:
-         std::unique_ptr<A> a_ = make_unique<A>();
-         public:
-         void process1(){
-             a_->do_something();
-         }
-         void process2(){
-             a_->do_something();
-         }
-         ~TestUnique(){
-            //无需再手动删除a_
-         }
+   public:
+    void do_something() {}
+    void set_B_C(const std::shared_ptr<B>& b, const std::shared_ptr<C>& c) {
+        b_ = b;
+        c_ = c;
+    }
+    void new_D() {
+        std::shared_ptr<A> this_shared_ptr2 = shared_from_this();
+        std::unique_ptr<D> d2(new D(this_shared_ptr2));
+    }
+};
+
+class B {
+   private:
+    std::shared_ptr<A> a_;
+
+   public:
+    B(std::shared_ptr<A>& a)
+        : a_(a) {}
+};
+
+class C {
+   private:
+    std::shared_ptr<A> a_;
+
+   public:
+    C(std::shared_ptr<A>& a)
+        : a_(a) {}
+};
+
+class D {
+   private:
+    std::shared_ptr<A> a_;
+
+   public:
+    D(std::shared_ptr<A>& a)
+        : a_(a) {}
+};
+
+int main() {
+    class TestUnique {
+       private:
+        std::unique_ptr<A> a_ = make_unique<A>();
+
+       public:
+        void process1() {
+            a_->do_something();
+        }
+        void process2() {
+            a_->do_something();
+        }
+        ~TestUnique() {
+            // 无需再手动删除a_
+        }
     };
 
     /*std::unique_ptr<A> a1 = make_unique<A>();
