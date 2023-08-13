@@ -1,12 +1,12 @@
 #include <algorithm>
 #include <array>
 #include <iostream>
+#include <iterator>
 #include <map>
+#include <memory>
 #include <set>
 #include <utility>
 #include <vector>
-#include <iterator>
-#include <algorithm>
 using namespace std;
 
 class ParseClass {
@@ -170,13 +170,16 @@ int main() {
         myvec.emplace_back(*it);
     }
     PrintContainer(myvec); */
-    cout << std::plus<int>()(10, 5) << endl;
+    //cout << std::plus<int>()(10, 5) << endl;
     /* my_reiter += 2;
-cout << my_reiter[2];  */
+    cout << my_reiter[2];  */
 
     /* plus a;
     cout << plus()(1, 2) << endl;        // 1、通过产生临时对象调用重载运算符
     cout << a.operator()(1, 2) << endl;  // 2、通过对象显示调用重载运算符
     cout << a(1, 2) << endl;             // 3、通过对象类似函数调用 隐示地调用重载运算符 */
+    
+    
+    
     return 0;
 }
